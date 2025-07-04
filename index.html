@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Portuguese Poem Generator</title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: linear-gradient(135deg, #228b22 0%, #dc143c 100%);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      h1 {
+        text-align: center;
+        color: #ffd700;
+        font-size: 42px;
+        font-family: "Times New Roman", serif;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+      }
+
+      .pen-emoji {
+        text-align: center;
+        font-size: 50px;
+        margin-bottom: 40px;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      form {
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        padding: 15px;
+        font-size: 20px;
+        width: 350px;
+        border: 3px solid #ffd700;
+        border-radius: 15px;
+        background: white;
+      }
+
+      input[type="text"]:focus {
+        border: 3px solid #ffd700;
+        outline: none;
+      }
+
+      input[type="text"]:hover {
+        border: 3px solid #ffd700;
+      }
+
+      input[type="text"]::placeholder {
+        color: #666;
+        opacity: 1;
+      }
+
+      button {
+        background: #228b22;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 20px;
+        border-radius: 15px;
+        cursor: pointer;
+        margin-left: 15px;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background: #1e7a1e;
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      button:before {
+        content: "✨ ";
+      }
+
+      .poem-signature {
+        font-style: italic;
+        font-size: 14px;
+        color: #888;
+        margin-top: 15px;
+        font-family: Arial, sans-serif;
+      }
+
+      .generating {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .examples {
+        text-align: center;
+        margin: 20px 0;
+        color: white;
+        font-size: 16px;
+      }
+
+      .examples strong {
+        color: #ffd700;
+      }
+
+      #poem {
+        background: white;
+        padding: 30px;
+        margin: 40px auto;
+        max-width: 600px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 20px;
+        line-height: 1.6;
+        box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+        border: 3px solid #ffd700;
+      }
+
+      #poem:before {
+        content: "📜 ";
+        font-size: 24px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      footer {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 40px;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      footer a {
+        color: #ffd700;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Portuguese Poem Generator</h1>
+    <div class="pen-emoji">✒️</div>
+
+    <form id="poem-form">
+      <div class="form-row">
+        <input
+          type="text"
+          id="poem-input"
+          placeholder="Enter a topic for your poem"
+          required
+        />
+        <button type="submit">Generate Poem</button>
+      </div>
+      <div class="examples">
+        <strong>i.e.:</strong> love, nature, friendship, family, ocean, dreams
+      </div>
+    </form>
+
+    <div id="poem" class="hidden">Click the button to generate a poem!</div>
+
+    <footer>
+      This AI project was coded by
+      <a href="https://github.com/JoanaInacio" target="_blank">Joana Inacio</a>,
+      is
+      <a
+        href="https://github.com/JoanaInacio/SheCodes-AI-Add-on-Project"
+        target="_blank"
+        >open-sourced on GitHub</a
+      >
+      and is
+      <a href="https://luminous-speculoos-b9ce82.netlify.app/" target="_blank"
+        >hosted on Netlify</a
+      >.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+
+    <script>
+      function generatePoem(event) {
+        event.preventDefault();
+
+        let myApiKey = "6t904043c5f4de3o104d9f1b3e869ba0";
+        let topicInput = document.querySelector("#poem-input");
+        let topic = topicInput.value;
+        let button = document.querySelector("button");
+
+        if (!topic.trim()) {
+          alert("Please enter a topic for your poem!");
+          return;
+        }
+
+        let myQuestion = "Write a Portuguese poem about " + topic;
+        let myContext =
+          "You are a skilled Portuguese poet. Write a short, elegant, and beautiful Portuguese poem with only 4 lines. Make it classic, romantic, and meaningful. Use simple but profound language. Do not include a title.";
+
+        let apiUrl = `https://api.shecodes.io/ai/v1/generate?prompt=${encodeURIComponent(
+          myQuestion
+        )}&context=${encodeURIComponent(myContext)}&key=${myApiKey}`;
+
+        let poemElement = document.querySelector("#poem");
+        poemElement.classList.remove("hidden");
+        poemElement.innerHTML =
+          '<div class="generating">⏳ Generating your Portuguese poem...</div>';
+
+        button.disabled = true;
+        button.innerHTML = "⏳ Generating...";
+
+        axios
+          .get(apiUrl)
+          .then(function (response) {
+            let poem = response.data.answer;
+
+            button.disabled = false;
+            button.innerHTML = "Generate Poem";
+            topicInput.value = "";
+            topicInput.focus();
+
+            poemElement.innerHTML = "";
+
+            let typewriter = new Typewriter(poemElement, {
+              delay: 50,
+            });
+
+            typewriter
+              .typeString(poem)
+              .typeString(
+                '<br><br><div class="poem-signature">- SheCodes AI</div>'
+              )
+              .start();
+          })
+          .catch(function (error) {
+            poemElement.innerHTML = "Something went wrong! Please try again.";
+
+            button.disabled = false;
+            button.innerHTML = "Generate Poem";
+          });
+      }
+
+      document
+        .querySelector("#poem-form")
+        .addEventListener("submit", generatePoem);
+    </script>
+  </body>
+</html>
